@@ -38,9 +38,9 @@ export function Navbar() {
           <Image
             src="/images/logo-white.png"
             alt="Veritas Logo"
-            width={48}
-            height={48}
-            style={{ height: "48px", width: "auto" }}
+            width={80}
+            height={80}
+            style={{ height: "80px", width: "auto" }}
           />
           <span
             className="hidden sm:inline"
