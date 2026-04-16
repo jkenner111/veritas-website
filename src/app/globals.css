@@ -1,15 +1,16 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0D0F14;
-  --color-surface: #13161E;
-  --color-surface-elevated: #1C2030;
-  --color-border: #2A2D3A;
-  --color-text-primary: #F0F2F7;
+  --color-background: #12172B;
+  --color-surface: #1A2040;
+  --color-surface-elevated: #212850;
+  --color-border: #2C3560;
+  --color-text-primary: #C8D0E0;
   --color-text-secondary: #9AA0B4;
-  --color-gold: #C9A84C;
-  --color-gold-light: #E8C96A;
+  --color-gold: #B8952A;
+  --color-gold-light: #D4AF50;
   --color-white: #FFFFFF;
+  --color-nav-text: #E8ECF4;
   --font-heading: var(--font-playfair);
   --font-body: var(--font-dm-sans);
 }
@@ -26,7 +27,7 @@ h1, h2, h3, h4 {
 }
 
 ::selection {
-  background: rgba(201, 168, 76, 0.3);
+  background: rgba(184, 149, 42, 0.3);
   color: var(--color-text-primary);
 }
 

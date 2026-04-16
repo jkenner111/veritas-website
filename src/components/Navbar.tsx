@@ -33,16 +33,17 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/images/logo.jpg"
             alt="Veritas Consulting Partners"
-            width={40}
-            height={40}
-            className="rounded-sm brightness-200 invert"
+            width={48}
+            height={48}
+            className="rounded-sm"
+            style={{ filter: "brightness(0) invert(1) opacity(0.9)" }}
           />
-          <span className="font-heading text-sm sm:text-base tracking-widest text-gold hidden sm:inline">
+          <span className="font-heading text-sm sm:text-base tracking-[0.15em] text-gold hidden sm:inline">
             VERITAS CONSULTING PARTNERS
           </span>
         </Link>
@@ -53,10 +54,10 @@ export function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className={`text-sm uppercase tracking-wider transition-colors ${
+              className={`text-xs uppercase tracking-[0.08em] font-normal transition-colors ${
                 pathname === l.href
                   ? "text-gold"
-                  : "text-text-secondary hover:text-gold-light"
+                  : "text-nav-text hover:text-gold"
               }`}
             >
               {l.label}
@@ -67,7 +68,7 @@ export function Navbar() {
         {/* Mobile toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-text-primary p-2"
+          className="lg:hidden text-nav-text p-2"
           aria-label="Toggle menu"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,8 +90,8 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 onClick={() => setMenuOpen(false)}
-                className={`text-sm uppercase tracking-wider py-2 ${
-                  pathname === l.href ? "text-gold" : "text-text-secondary"
+                className={`text-sm uppercase tracking-[0.08em] font-normal py-2 ${
+                  pathname === l.href ? "text-gold" : "text-nav-text"
                 }`}
               >
                 {l.label}

@@ -23,14 +23,15 @@ export function Footer() {
                 alt="Veritas Consulting Partners"
                 width={36}
                 height={36}
-                className="rounded-sm brightness-200 invert"
+                className="rounded-sm"
+                style={{ filter: "brightness(0) invert(1) opacity(0.9)" }}
               />
-              <p className="font-heading text-lg tracking-widest text-gold">
+              <p className="font-heading text-base tracking-[0.15em] text-gold">
                 VERITAS CONSULTING PARTNERS
               </p>
             </div>
             <p className="text-sm text-text-secondary leading-relaxed">
-              Strategy, technology, and communications — integrated under one roof.
+              Strategy, technology, and communications -- integrated under one roof.
             </p>
           </div>
 
@@ -44,7 +45,7 @@ export function Footer() {
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="text-sm text-text-secondary hover:text-gold-light transition-colors"
+                  className="text-sm text-text-secondary hover:text-gold transition-colors"
                 >
                   {l.label}
                 </Link>
@@ -61,7 +62,7 @@ export function Footer() {
               <p>Annapolis, Maryland</p>
               <a
                 href="mailto:info@veritasconsultingpartnersllc.com"
-                className="hover:text-gold-light transition-colors"
+                className="hover:text-gold transition-colors"
               >
                 info@veritasconsultingpartnersllc.com
               </a>
@@ -69,7 +70,7 @@ export function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-gold-light transition-colors"
+                className="hover:text-gold transition-colors"
               >
                 LinkedIn
               </a>
