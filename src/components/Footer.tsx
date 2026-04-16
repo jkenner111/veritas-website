@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const links = [
   { href: "/", label: "Home" },
@@ -16,9 +17,18 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <p className="font-heading text-lg tracking-widest text-gold mb-4">
-              VERITAS CONSULTING PARTNERS
-            </p>
+            <div className="flex items-center gap-3 mb-4">
+              <Image
+                src="/images/logo.jpg"
+                alt="Veritas Consulting Partners"
+                width={36}
+                height={36}
+                className="rounded-sm brightness-200 invert"
+              />
+              <p className="font-heading text-lg tracking-widest text-gold">
+                VERITAS CONSULTING PARTNERS
+              </p>
+            </div>
             <p className="text-sm text-text-secondary leading-relaxed">
               Strategy, technology, and communications — integrated under one roof.
             </p>
