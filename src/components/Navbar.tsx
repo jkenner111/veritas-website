@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -33,8 +34,16 @@ export function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        <Link href="/" className="no-underline">
+        <Link href="/" className="flex items-center gap-3 no-underline">
+          <Image
+            src="/images/logo-white.png"
+            alt="Veritas Logo"
+            width={48}
+            height={48}
+            style={{ height: "48px", width: "auto" }}
+          />
           <span
+            className="hidden sm:inline"
             style={{
               fontFamily: "Playfair Display, Georgia, serif",
               fontSize: "18px",
