@@ -54,7 +54,7 @@ export function ContactForm() {
             id="name"
             name="name"
             required
-            className="w-full bg-background border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors"
+            className="w-full bg-surface-elevated border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors"
           />
         </div>
 
@@ -66,7 +66,7 @@ export function ContactForm() {
             type="text"
             id="organization"
             name="organization"
-            className="w-full bg-background border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors"
+            className="w-full bg-surface-elevated border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors"
           />
         </div>
 
@@ -79,7 +79,7 @@ export function ContactForm() {
             id="email"
             name="email"
             required
-            className="w-full bg-background border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors"
+            className="w-full bg-surface-elevated border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors"
           />
         </div>
 
@@ -92,7 +92,7 @@ export function ContactForm() {
             name="message"
             rows={5}
             required
-            className="w-full bg-background border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors resize-vertical"
+            className="w-full bg-surface-elevated border border-border text-text-primary px-4 py-3 text-sm focus:border-gold focus:outline-none transition-colors resize-vertical"
           />
         </div>
 

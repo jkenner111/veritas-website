@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import VeritasLogo from "@/components/VeritasLogo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -29,20 +29,13 @@ export function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border"
+          ? "bg-[#0A1020]/95 backdrop-blur-md border-b border-border"
           : "bg-transparent"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/images/logo.jpg"
-            alt="Veritas Consulting Partners"
-            width={48}
-            height={48}
-            className="rounded-sm"
-            style={{ filter: "brightness(0) invert(1) opacity(0.9)" }}
-          />
+          <VeritasLogo size={44} />
           <span className="font-heading text-sm sm:text-base tracking-[0.15em] text-gold hidden sm:inline">
             VERITAS CONSULTING PARTNERS
           </span>
@@ -83,7 +76,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-background/98 backdrop-blur-md border-t border-border">
+        <div className="lg:hidden bg-[#0A1020]/98 backdrop-blur-md border-t border-border">
           <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-4">
             {links.map((l) => (
               <Link

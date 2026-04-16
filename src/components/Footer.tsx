@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import VeritasLogo from "@/components/VeritasLogo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -12,20 +12,13 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="bg-surface border-t border-border">
+    <footer className="bg-footer-bg border-t border-border">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <Image
-                src="/images/logo.jpg"
-                alt="Veritas Consulting Partners"
-                width={36}
-                height={36}
-                className="rounded-sm"
-                style={{ filter: "brightness(0) invert(1) opacity(0.9)" }}
-              />
+              <VeritasLogo size={36} />
               <p className="font-heading text-base tracking-[0.15em] text-gold">
                 VERITAS CONSULTING PARTNERS
               </p>
