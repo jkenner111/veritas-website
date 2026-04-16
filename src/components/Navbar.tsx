@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -32,9 +33,18 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="font-heading text-lg tracking-widest text-gold">
-          VERITAS CONSULTING PARTNERS
+      <nav className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3">
+          <Image
+            src="/images/logo.jpg"
+            alt="Veritas Consulting Partners"
+            width={40}
+            height={40}
+            className="rounded-sm brightness-200 invert"
+          />
+          <span className="font-heading text-sm sm:text-base tracking-widest text-gold hidden sm:inline">
+            VERITAS CONSULTING PARTNERS
+          </span>
         </Link>
 
         {/* Desktop */}
@@ -43,7 +53,7 @@ export function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className={`text-sm uppercase tracking-wider transition-colors ${
+              className={`text-xs uppercase tracking-wider transition-colors ${
                 pathname === l.href
                   ? "text-gold"
                   : "text-text-secondary hover:text-gold-light"
