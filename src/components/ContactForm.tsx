@@ -11,13 +11,19 @@ export function ContactForm() {
     setSubmitting(true);
 
     const form = e.currentTarget;
-    const data = new FormData(form);
+    const fd = new FormData(form);
+    const body = {
+      name: fd.get("name"),
+      organization: fd.get("organization"),
+      email: fd.get("email"),
+      message: fd.get("message"),
+    };
 
     try {
-      const res = await fetch("https://formspree.io/f/placeholder", {
+      const res = await fetch("/api/contact", {
         method: "POST",
-        body: data,
-        headers: { Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
       if (res.ok) {
