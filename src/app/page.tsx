@@ -29,7 +29,10 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="min-h-screen flex items-center pt-32 pb-20 px-6">
+      <section
+        className="min-h-screen flex items-center pt-32 pb-20 px-6 relative"
+        style={{ background: "linear-gradient(135deg, #1a1a2e 60%, #2a1f0e 100%)" }}
+      >
         <div className="max-w-4xl mx-auto">
           <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-6">
             Strategy Built. Message Crafted. Technology Deployed.
@@ -57,13 +60,20 @@ export default function Home() {
           <div className="mt-10">
             <Link
               href="/contact"
-              className="inline-block bg-gold hover:bg-gold-light text-background font-body font-semibold text-sm uppercase tracking-wider px-8 py-4 transition-colors duration-200"
+              className="inline-block font-body font-semibold text-sm uppercase tracking-wider px-8 py-4 transition-colors duration-200"
+              style={{ backgroundColor: "#c9a84c", color: "#1a1a2e" }}
             >
               Schedule a Consultation
             </Link>
           </div>
         </div>
+        <div
+          className="absolute bottom-0 left-0 right-0 h-[3px]"
+          style={{ background: "linear-gradient(90deg, transparent, #c9a84c, transparent)" }}
+        />
       </section>
+
+      <hr className="gold-separator" />
 
       {/* Services */}
       <section className="py-20 px-6 bg-surface">
@@ -72,7 +82,7 @@ export default function Home() {
             {services.map((service) => (
               <div
                 key={service.title}
-                className="bg-surface-elevated border border-border p-8 hover:-translate-y-1 transition-transform duration-300"
+                className="bg-surface-elevated border border-border p-8 hover:border-gold transition-colors duration-300"
               >
                 <h3 className="font-heading text-xl text-gold mb-4">
                   {service.title}
@@ -103,6 +113,8 @@ export default function Home() {
         </div>
       </section>
 
+      <hr className="gold-separator" />
+
       {/* Team Teaser */}
       <section className="py-20 px-6 bg-surface">
         <div className="max-w-3xl mx-auto text-center">
@@ -113,7 +125,8 @@ export default function Home() {
           </p>
           <Link
             href="/our-team"
-            className="inline-block bg-gold hover:bg-gold-light text-background font-body font-semibold text-sm uppercase tracking-wider px-8 py-4 transition-colors duration-200"
+            className="inline-block font-body font-semibold text-sm uppercase tracking-wider px-8 py-4 transition-colors duration-200"
+            style={{ backgroundColor: "#c9a84c", color: "#1a1a2e" }}
           >
             Meet the Team
           </Link>

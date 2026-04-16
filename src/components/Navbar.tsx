@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import VeritasLogo from "@/components/VeritasLogo";
 
 const links = [
   { href: "/", label: "Home" },
@@ -29,29 +28,53 @@ export function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#0A1020]/95 backdrop-blur-md border-b border-border"
+          ? "bg-[#1a1a2e]/95 backdrop-blur-md border-b border-border"
           : "bg-transparent"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <VeritasLogo size={44} />
-          <span className="font-heading text-sm sm:text-base tracking-[0.15em] text-gold hidden sm:inline">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/logo.svg"
+            alt="Veritas Logo"
+            width={50}
+            height={50}
+          />
+          <span
+            className="hidden sm:inline font-heading uppercase"
+            style={{
+              fontSize: "16px",
+              fontWeight: 700,
+              letterSpacing: "2px",
+              color: "#ffffff",
+            }}
+          >
             VERITAS CONSULTING PARTNERS
           </span>
         </Link>
 
         {/* Desktop */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-0">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className={`text-xs uppercase tracking-[0.08em] font-normal transition-colors ${
-                pathname === l.href
-                  ? "text-gold"
-                  : "text-nav-text hover:text-gold"
-              }`}
+              className="transition-colors"
+              style={{
+                color: pathname === l.href ? "#c9a84c" : "#ffffff",
+                textTransform: "uppercase",
+                letterSpacing: "2px",
+                fontSize: "13px",
+                fontWeight: 600,
+                padding: "0 18px",
+              }}
+              onMouseEnter={(e) => {
+                if (pathname !== l.href) e.currentTarget.style.color = "#c9a84c";
+              }}
+              onMouseLeave={(e) => {
+                if (pathname !== l.href) e.currentTarget.style.color = "#ffffff";
+              }}
             >
               {l.label}
             </Link>
@@ -61,7 +84,7 @@ export function Navbar() {
         {/* Mobile toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="lg:hidden text-nav-text p-2"
+          className="lg:hidden text-white p-2"
           aria-label="Toggle menu"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -76,16 +99,21 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-[#0A1020]/98 backdrop-blur-md border-t border-border">
+        <div className="lg:hidden bg-[#1a1a2e]/98 backdrop-blur-md border-t border-border">
           <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-4">
             {links.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 onClick={() => setMenuOpen(false)}
-                className={`text-sm uppercase tracking-[0.08em] font-normal py-2 ${
-                  pathname === l.href ? "text-gold" : "text-nav-text"
-                }`}
+                style={{
+                  color: pathname === l.href ? "#c9a84c" : "#ffffff",
+                  textTransform: "uppercase",
+                  letterSpacing: "2px",
+                  fontSize: "14px",
+                  fontWeight: 600,
+                  padding: "8px 0",
+                }}
               >
                 {l.label}
               </Link>

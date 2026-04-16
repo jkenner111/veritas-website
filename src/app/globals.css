@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #0F1523;
-  --color-surface: #161E35;
-  --color-surface-elevated: #1E2845;
-  --color-border: #2A3560;
-  --color-text-primary: #C8D0E0;
-  --color-text-secondary: #9AA0B4;
-  --color-gold: #B8952A;
-  --color-gold-light: #D4AF50;
-  --color-white: #FFFFFF;
-  --color-nav-text: #E8ECF4;
-  --color-footer-bg: #0A1020;
+  --color-background: #1a1a2e;
+  --color-surface: #16213e;
+  --color-surface-elevated: #0f3460;
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-border-gold: rgba(201, 168, 76, 0.3);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-text-muted: #aaaaaa;
+  --color-gold: #c9a84c;
+  --color-gold-light: #b8943f;
+  --color-white: #ffffff;
+  --color-nav-text: #ffffff;
+  --color-hero-warm: #2a1f0e;
   --font-heading: var(--font-playfair);
   --font-body: var(--font-dm-sans);
 }
@@ -28,10 +30,17 @@ h1, h2, h3, h4 {
 }
 
 ::selection {
-  background: rgba(184, 149, 42, 0.3);
+  background: rgba(201, 168, 76, 0.3);
   color: var(--color-text-primary);
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+.gold-separator {
+  border: none;
+  border-top: 2px solid #c9a84c;
+  max-width: 100px;
+  margin: 25px auto;
 }
