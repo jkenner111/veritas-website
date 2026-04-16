@@ -29,10 +29,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section
-        className="min-h-screen flex items-center pt-32 pb-20 px-6 text-center"
-        style={{ background: "linear-gradient(135deg, #1a1a2e 60%, #2a1f0e 100%)" }}
-      >
+      <section className="min-h-screen flex items-center pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto">
           <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-6">
             Strategy Built. Message Crafted. Technology Deployed.
