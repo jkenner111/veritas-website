@@ -16,13 +16,9 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-3 mb-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/images/logo.svg" alt="Veritas Logo" width={40} height={40} />
-              <p className="font-heading uppercase" style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "2px", color: "#ffffff" }}>
-                VERITAS CONSULTING PARTNERS
-              </p>
-            </div>
+            <p className="font-heading uppercase mb-4" style={{ fontSize: "16px", fontWeight: 700, letterSpacing: "3px", color: "#ffffff" }}>
+              VERITAS CONSULTING PARTNERS
+            </p>
             <p className="text-sm leading-relaxed" style={{ color: "#cccccc" }}>
               Strategy, technology, and communications -- integrated under one roof.
             </p>

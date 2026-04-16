@@ -33,21 +33,17 @@ export function Navbar() {
       }`}
     >
       <nav className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/logo.svg"
-            alt="Veritas Logo"
-            width={50}
-            height={50}
-          />
+        <Link href="/" className="no-underline">
           <span
-            className="hidden sm:inline font-heading uppercase"
             style={{
-              fontSize: "16px",
+              fontFamily: "Playfair Display, Georgia, serif",
+              fontSize: "18px",
               fontWeight: 700,
-              letterSpacing: "2px",
+              letterSpacing: "3px",
               color: "#ffffff",
+              textTransform: "uppercase" as const,
+              whiteSpace: "nowrap" as const,
+              textDecoration: "none",
             }}
           >
             VERITAS CONSULTING PARTNERS

@@ -30,8 +30,7 @@ export default function Home() {
     <>
       {/* Hero */}
       <section
-        className="min-h-screen flex items-center pt-32 pb-20 px-6 relative"
-        style={{ background: "linear-gradient(135deg, #1a1a2e 60%, #2a1f0e 100%)" }}
+        className="min-h-screen flex items-center pt-32 pb-20 px-6 relative bg-background"
       >
         <div className="max-w-4xl mx-auto">
           <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-6">
@@ -67,10 +66,6 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <div
-          className="absolute bottom-0 left-0 right-0 h-[3px]"
-          style={{ background: "linear-gradient(90deg, transparent, #c9a84c, transparent)" }}
-        />
       </section>
 
       <hr className="gold-separator" />
