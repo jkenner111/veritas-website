@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "What We Do",
   description:
-    "Three practice areas -- government affairs, local AI pipeline deployment, and strategic communications -- integrated under one team at Veritas Consulting Partners.",
+    "Three core practice areas -- government affairs, RPA and AI integration, and strategic communications -- plus a full slate of advisory services, integrated under one team at Veritas Consulting Partners.",
 };
 
 const services = [
@@ -22,12 +22,14 @@ const services = [
     ],
   },
   {
-    title: "Local AI Pipeline Deployment",
+    title: "RPA & AI Integration",
     description: [
-      "We design and deploy fully local, privately owned agentic AI systems for organizations that want the power of AI without surrendering their data to the cloud. That means your agents run on your hardware, your documents stay on your network, and your operations remain sovereign.",
-      "This isn't AI as a subscription service. It's AI as infrastructure -- built to your specifications, maintained by us, and owned by you.",
+      "Embrace the future of efficiency. We help organizations automate repetitive workflows, integrate scalable AI tools into existing operations, and -- for clients who need it -- deploy fully private agentic AI systems on their own infrastructure. The goal is the same in every engagement: free your team to focus on strategy while technology handles the operational lift.",
+      "Whether you need lightweight RPA to streamline a back-office process or a sovereign AI stack with no cloud dependencies, we build to your specifications, maintain what we deliver, and hand you full ownership of the result.",
     ],
     bullets: [
+      "Robotic Process Automation -- workflow automation that eliminates repetitive manual operations and reduces error rates",
+      "AI tool integration -- scalable, production-ready AI capabilities embedded into your existing systems and processes",
       "Agentic AI system design and deployment -- autonomous reasoning, tool use, persistent memory, and web search with no cloud dependency",
       "RAG pipeline development -- agents that intelligently query and reason over your organization's own documents, databases, and internal knowledge",
       "Local inference deployment on existing or minimal hardware -- capability without cloud spend",
@@ -95,6 +97,61 @@ export default function WhatWeDo() {
           </div>
         </section>
       ))}
+
+      {/* Additional Advisory Services */}
+      <section className={`py-20 px-6 ${services.length % 2 === 0 ? "bg-surface" : ""}`}>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-4">
+            Additional Advisory Services
+          </p>
+          <h2 className="font-heading text-3xl text-text-primary mb-6">
+            Beyond the Core
+          </h2>
+          <p className="text-text-secondary leading-relaxed mb-10">
+            In addition to our core practice areas, Veritas offers focused
+            advisory support for organizations navigating procurement,
+            communications, operations, and federal real estate. Engagements
+            are scoped to the problem -- from one-time advisory to sustained
+            partnership.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                title: "Government Contracting Support & Readiness",
+                body: "Navigate SAM.gov, VetCert, UEI/CAGE registrations, and procurement strategy. Tailored assistance to compete -- and win -- in federal contracting.",
+              },
+              {
+                title: "Public Relations & External Affairs",
+                body: "Visibility is everything. We build brands, manage crises, and develop narratives that break through marketplace noise and shape public perception.",
+              },
+              {
+                title: "Strategic Business Consulting",
+                body: "Transform operations with expert guidance on compliance, growth, and organizational design. Actionable insights for resilient, future-ready businesses.",
+              },
+              {
+                title: "Real Estate Advisory & Project Management",
+                body: "Navigate federal real estate complexities -- site selection, development, and strategic planning -- to maximize project success in competitive environments.",
+              },
+            ].map((service) => (
+              <div
+                key={service.title}
+                className="bg-surface-elevated border border-border p-6 hover:border-gold transition-colors duration-300"
+              >
+                <h3 className="font-heading text-lg text-gold mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-text-secondary leading-relaxed text-sm">
+                  {service.body}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-text-secondary leading-relaxed mt-10 italic">
+            We offer customized solutions built on rigorous analysis, agile
+            execution, and a commitment to lasting results.
+          </p>
+        </div>
+      </section>
     </>
   );
 }

@@ -32,14 +32,24 @@ export default function Contact() {
       {/* Contact Info */}
       <section className="py-20 px-6 bg-surface">
         <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 text-center">
             <div>
               <h3 className="font-heading text-lg text-gold mb-3">Email</h3>
               <a
                 href="mailto:info@veritasconsultingpartnersllc.com"
-                className="text-text-secondary hover:text-gold-light transition-colors text-sm"
+                className="text-text-secondary hover:text-gold-light transition-colors text-sm break-words"
               >
                 info@veritasconsultingpartnersllc.com
+              </a>
+            </div>
+
+            <div>
+              <h3 className="font-heading text-lg text-gold mb-3">Phone</h3>
+              <a
+                href="tel:+16175293995"
+                className="text-text-secondary hover:text-gold-light transition-colors text-sm"
+              >
+                (617) 529-3995
               </a>
             </div>
 

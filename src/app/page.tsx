@@ -14,9 +14,9 @@ const services = [
       "Congressional relations, federal rulemaking, regulatory analysis, and stakeholder engagement. We know how Washington works because we've worked in it.",
   },
   {
-    title: "Local AI Pipeline Deployment",
+    title: "RPA & AI Integration",
     description:
-      "Custom agentic AI systems built on your infrastructure. No cloud dependencies, no vendor lock-in, no data leaving your control. RAG pipelines, autonomous agents, and local inference -- deployed and maintained for your organization.",
+      "Workflow automation and scalable AI integration -- from process automation that eliminates repetitive operations to custom agentic systems and RAG pipelines deployed on your own infrastructure. AI as infrastructure, not a subscription.",
   },
   {
     title: "Strategic Communications & Multimedia",
@@ -90,6 +90,89 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Our Story */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-6 text-center">
+            Our Story
+          </p>
+          <h2 className="font-heading text-3xl sm:text-4xl text-text-primary mb-8 text-center">
+            Rooted in truth. Built for impact.
+          </h2>
+          <div className="space-y-5 text-text-secondary text-lg leading-relaxed">
+            <p>
+              Founded on the principles of integrity, innovation, and impact,
+              Veritas Consulting Partners was established to deliver bold,
+              transformative solutions to complex public and private sector
+              challenges. With decades of collective experience in government
+              affairs, business operations, and emerging technology, we saw a
+              need for a consulting firm that blends strategic insight with
+              real-world execution.
+            </p>
+            <p>
+              From Capitol Hill to the boardroom, we serve as trusted advisors
+              to agencies, institutions, and companies seeking clarity,
+              compliance, and competitive edge.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <hr className="gold-separator" />
+
+      {/* Vision & Values */}
+      <section className="py-20 px-6 bg-surface">
+        <div className="max-w-7xl mx-auto">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-6">
+              Our Vision
+            </p>
+            <p className="font-heading text-2xl sm:text-3xl text-text-primary leading-snug">
+              To be the premier consulting firm known for trusted expertise,
+              cutting-edge innovation, and meaningful impact across business
+              and government landscapes.
+            </p>
+          </div>
+          <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-10 text-center">
+            Our Values
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              {
+                name: "Integrity",
+                body: "We operate with honesty and transparency in everything we do.",
+              },
+              {
+                name: "Excellence",
+                body: "We set the highest standards in service delivery and outcomes.",
+              },
+              {
+                name: "Innovation",
+                body: "We embrace bold thinking and modern tools to solve tomorrow's challenges today.",
+              },
+              {
+                name: "Collaboration",
+                body: "We work alongside clients as true partners, not vendors.",
+              },
+            ].map((value) => (
+              <div
+                key={value.name}
+                className="bg-surface-elevated border border-border p-6"
+              >
+                <h3 className="font-heading text-lg text-gold mb-3">
+                  {value.name}
+                </h3>
+                <p className="text-text-secondary leading-relaxed text-sm">
+                  {value.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <hr className="gold-separator" />
 
       {/* Why Veritas Teaser */}
       <section className="py-20 px-6">
