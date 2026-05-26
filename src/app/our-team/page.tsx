@@ -57,7 +57,7 @@ export default function OurTeam() {
   return (
     <>
       {/* Hero */}
-      <section className="pt-32 pb-16 px-6">
+      <section className="pt-28 pb-6 sm:pt-32 sm:pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-text-primary mb-4">
             Our Team
@@ -69,7 +69,7 @@ export default function OurTeam() {
       </section>
 
       {/* Farrah */}
-      <section className="py-20 px-6 bg-surface">
+      <section className="pt-8 pb-16 sm:py-20 px-6 bg-surface">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col md:flex-row gap-10 items-start">
             <div className="shrink-0">
