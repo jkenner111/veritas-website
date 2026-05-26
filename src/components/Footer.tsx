@@ -51,6 +51,12 @@ export function Footer() {
             <div className="flex flex-col gap-2 text-sm" style={{ color: "#cccccc" }}>
               <p>Annapolis, Maryland</p>
               <a
+                href="tel:+16175293995"
+                className="hover:text-gold transition-colors"
+              >
+                (617) 529-3995
+              </a>
+              <a
                 href="mailto:info@veritasconsultingpartnersllc.com"
                 className="hover:text-gold transition-colors"
               >

@@ -88,28 +88,27 @@ export default function OurTeam() {
               <p className="text-gold text-sm uppercase tracking-wider font-semibold mb-6">
                 CEO | Government Affairs &amp; Policy
               </p>
-              <p className="text-text-secondary leading-relaxed">
-                Strategic government affairs and public policy executive with
-                over 20 years of experience shaping legislation, managing
-                multi-state regulatory strategy, and leading high-stakes
-                stakeholder engagement across Congress, federal agencies, and
-                regulated industries.
-              </p>
-
-              <SectionLabel>Credentials</SectionLabel>
-              <BulletList
-                items={[
-                  "Juris Doctor (JD) -- Suffolk University Law School",
-                  "Certified Anti-Money Laundering Specialist (CAMS)",
-                  "Six Sigma Black Belt Professional (SSBBP)",
-                  "Active Security Clearance: Secret & Public Trust",
-                ]}
-              />
+              <div className="space-y-4 text-text-secondary leading-relaxed">
+                <p>
+                  Strategic government affairs and public policy executive with
+                  over 20 years of experience shaping legislation, managing
+                  multi-state regulatory strategy, and leading high-stakes
+                  stakeholder engagement across Congress, federal agencies, and
+                  regulated industries.
+                </p>
+                <p>
+                  Proven ability to translate complex policy into business
+                  impact, manage external lobbyists and coalitions, and build
+                  lasting relationships with legislators and regulators.
+                  Experienced in emerging technology, AI-driven operations, and
+                  the policy frameworks governing highly regulated sectors.
+                </p>
+              </div>
 
               <SectionLabel>Professional Highlights</SectionLabel>
               <BulletList
                 items={[
-                  "Founded Veritas Consulting Partners LLC, securing $1.2M in advisory contracts within the first year",
+                  "Founded Veritas Consulting Partners LLC, advising on $1.2M in advisory contracts within the first year",
                   "Secured $50M in supplemental federal oversight funding through bipartisan congressional negotiations",
                   "Directed passage of bipartisan legislation extending pandemic fraud enforcement statutes",
                   "100+ congressional briefings, 13 formal hearings, 300+ press engagements",
@@ -117,29 +116,129 @@ export default function OurTeam() {
                 ]}
               />
 
+              <SectionLabel>Legislative &amp; Regulatory Strategy</SectionLabel>
+              <BulletList
+                items={[
+                  "Multi-jurisdictional legislative strategy across bipartisan congressional relationships, OMB, and federal regulators",
+                  "Championed and directed passage of legislation extending the statute of limitations on pandemic loan fraud -- complex oversight challenge to bipartisan law",
+                  "Developed and negotiated Congressional Budget Justifications, securing bipartisan support for increased appropriations",
+                  "Drafted state-level legislation passed by the Massachusetts House of Representatives -- firsthand experience moving a bill from drafting to enactment",
+                  "Government Accountability Office (GAO) Liaison: coordinated agency responses to audits and oversight reviews",
+                ]}
+              />
+
+              <SectionLabel>Congressional &amp; Federal Advocacy</SectionLabel>
+              <BulletList
+                items={[
+                  "Primary congressional liaison for a federal oversight agency operating under intense regulatory scrutiny",
+                  "100+ congressional briefings and 13 formal hearings, including high-stakes pandemic fraud oversight testimony",
+                  "Managed external government affairs partners and coalitions, coordinating across legal, communications, and program teams",
+                  "Chief of Staff to a Massachusetts state legislator: bill tracking, constituent services, press relations across a full district portfolio",
+                  "Translated complex policy and oversight findings into business-ready briefings for senior leadership",
+                ]}
+              />
+
+              <SectionLabel>
+                Strategic Communications &amp; Stakeholder Engagement
+              </SectionLabel>
+              <BulletList
+                items={[
+                  "Designed and executed multi-platform Strategic Communications Plan and digital fraud awareness campaign for a federal oversight agency",
+                  "300+ press engagements representing a federal agency in a highly scrutinized regulatory environment",
+                  "Managed public trust and media relationships in high-profile oversight contexts",
+                  "Cross-functional partnership across legal, communications, and commercial teams to deliver integrated advocacy strategies",
+                ]}
+              />
+
+              <SectionLabel>
+                Process Automation &amp; Federal Operations
+              </SectionLabel>
+              <BulletList
+                items={[
+                  "Implemented 20 Robotic Process Automation (RPA) solutions, saving 600+ hours of operational time across federal client engagements (Deloitte)",
+                  "Delivered 20+ automated processes in a three-month period for a Fortune 500 finance operations transformation (Accenture)",
+                  "Managed a $1.3B procurement portfolio and $70M+ in agency operating contracts for the District of Columbia",
+                  "Led rollout of DC's Acquisition Planning Tool, automating $500M in procurement requests and modernizing the District's enterprise procurement system",
+                  "Acting AIG for Management and Operations: oversaw a $47M+ budget, HR, contracts, and communications functions at SBA OIG",
+                ]}
+              />
+
               <SectionLabel>Experience</SectionLabel>
               <ExperienceList
                 items={[
                   {
+                    role: "Founder & CEO",
+                    org: "Veritas Consulting Partners LLC",
+                    dates: "Mar 2025 - Present",
+                  },
+                  {
                     role: "Director of Congressional & External Affairs",
                     org: "U.S. Small Business Administration OIG",
-                    dates: "2020-2025",
+                    dates: "Mar 2020 - Sep 2025",
                   },
                   {
                     role: "Senior Consultant",
                     org: "Deloitte",
-                    dates: "2018-2020",
+                    dates: "Dec 2018 - Feb 2020",
                   },
                   {
                     role: "Business Advisory Associate Manager",
                     org: "Accenture",
-                    dates: "2017-2018",
+                    dates: "Mar 2017 - Dec 2018",
                   },
                   {
-                    role: "Program Manager/Contracting Officer",
+                    role: "Program Manager / Contracting Officer",
                     org: "District of Columbia Government",
-                    dates: "2013-2017",
+                    dates: "2013 - 2017",
                   },
+                  {
+                    role: "Benefits Specialist, Public Safety Officers Benefits Program",
+                    org: "U.S. Department of Justice",
+                    dates: "Feb 2009 - Sep 2013",
+                  },
+                  {
+                    role: "Chief of Staff / Legislative Aide",
+                    org: "Massachusetts House of Representatives",
+                    dates: "Jan 2006 - Sep 2007",
+                  },
+                  {
+                    role: "Research / Policy Analyst",
+                    org: "MassVote",
+                    dates: "Sep 2008 - Nov 2008",
+                  },
+                ]}
+              />
+
+              <SectionLabel>Credentials</SectionLabel>
+              <BulletList
+                items={[
+                  "Juris Doctor (JD) -- Suffolk University Law School (President, Black Law Students Association; Dean's List; Thomas Vreeland Pioneer Award)",
+                  "B.A., History -- Florida State University (W.E.B. Du Bois Honors Society; Dean's List)",
+                  "Certified Anti-Money Laundering Specialist (CAMS)",
+                  "Six Sigma Black Belt Professional (SSBBP)",
+                  "Active Security Clearance: Secret & Public Trust",
+                  "Languages: English (fluent), Haitian Creole and French (conversational)",
+                ]}
+              />
+
+              <SectionLabel>Awards &amp; Recognition</SectionLabel>
+              <BulletList
+                items={[
+                  "Inspector General Award for Excellence in Congressional & External Affairs -- U.S. SBA OIG",
+                  "CIGIE Award for Excellence in Communications (Council of the Inspectors General on Integrity and Efficiency)",
+                  "Inspector General Award for Excellence in Legislative Strategy and Oversight",
+                  "Five additional national awards recognizing leadership in oversight, legislative advocacy, and communications across federal service",
+                ]}
+              />
+
+              <SectionLabel>Community &amp; Leadership</SectionLabel>
+              <BulletList
+                items={[
+                  "Board Member, The Richey Foundation (2021-Present)",
+                  "Board Member, Catholic Charities Healthy Families (2019-2022)",
+                  "Secretary, Suffolk University Alumni Association, DC Chapter",
+                  "Appointee, Sustainable Energy Utility Advisory Board, District of Columbia",
+                  "Board Member, Florida State University Alumni Association (2010-2020) -- led fundraising initiatives raising $50K",
                 ]}
               />
             </div>
@@ -155,8 +254,8 @@ export default function OurTeam() {
               <Image
                 src="/images/team/jack.jpg"
                 alt="John &quot;Jack&quot; Kenner"
-                width={400}
-                height={450}
+                width={450}
+                height={316}
                 className="rounded-lg object-cover"
               />
             </div>
@@ -165,7 +264,7 @@ export default function OurTeam() {
                 John &ldquo;Jack&rdquo; Kenner
               </h2>
               <p className="text-gold text-sm uppercase tracking-wider font-semibold mb-6">
-                Technical Director | Agentic AI Pipeline Engineer
+                Technical Director | RPA &amp; AI Integration
               </p>
               <div className="space-y-4 text-text-secondary leading-relaxed">
                 <p>
@@ -207,61 +306,16 @@ export default function OurTeam() {
                 </a>
               </div>
 
-              <SectionLabel>Agentic Pipeline Infrastructure</SectionLabel>
+              <SectionLabel>What I Deliver</SectionLabel>
               <BulletList
                 items={[
-                  "Design and deploy fully local, privately owned agentic AI systems -- autonomous reasoning, tool use, persistent memory, and web search with no cloud dependency",
-                  "RAG pipeline development -- agents that intelligently query and reason over your organization's own documents, databases, and internal knowledge; your data stays yours",
-                  "Context management and automated session windowing -- reliable, long-running agent operations that run autonomously",
-                  "Agent-native voice interfaces -- speech in, intelligence out",
+                  "Secure, private AI systems deployed on your hardware -- your data stays on your network and never leaves your control",
+                  "Document intelligence -- AI that reads, understands, and answers questions about your organization's own files and knowledge",
+                  "Practical automation -- AI assistants and agents that handle multi-step work without ongoing supervision",
+                  "Reliable, always-on deployment matched to your use case and budget -- from a single workstation to multi-machine setups",
+                  "No subscriptions, no vendor lock-in, no black boxes -- you own what we build",
                 ]}
               />
-
-              <SectionLabel>Local Inference Deployment</SectionLabel>
-              <BulletList
-                items={[
-                  "Multi-machine inference pipelines deployable on existing or minimal hardware -- capability without cloud spend",
-                  "Flexible model deployment across architectures and scales -- from lightweight local models to large reasoning systems, matched to your use case and budget",
-                  "Local inference for 100B+ parameter models across distributed hardware",
-                ]}
-              />
-
-              <SectionLabel>LLM Benchmarking &amp; Evaluation</SectionLabel>
-              <BulletList
-                items={[
-                  "Custom benchmark suites for evaluating AI model performance across reasoning, code generation, and business tasks",
-                  "Throughput and concurrency testing for production workloads",
-                  "Model selection strategy for cost-effective deployment",
-                ]}
-              />
-
-              <SectionLabel>
-                Pipeline Foundations &amp; Sovereignty
-              </SectionLabel>
-              <BulletList
-                items={[
-                  "Fully self-hosted supporting stack: communications, search, secure remote access, tunneling -- sovereign by design",
-                  "Production-grade service management and security hardening -- always-on reliability without managed services",
-                  "Full stack ownership from hardware to model layer -- no black boxes, no vendor lock-in",
-                  "Containerized service orchestration (13+ production services)",
-                ]}
-              />
-
-              <SectionLabel>Project -- TalkinClaw</SectionLabel>
-              <p className="text-text-secondary text-sm leading-relaxed">
-                Open-source Android voice assistant that connects to a locally
-                hosted AI agent. All speech processing runs on-device -- no
-                cloud dependencies, no data collection. Submitted to F-Droid via
-                GitLab.{" "}
-                <a
-                  href="https://gitlab.com/jkenner111/TalkinClaw"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gold hover:text-gold-light transition-colors"
-                >
-                  View on GitLab &rarr;
-                </a>
-              </p>
 
               <SectionLabel>Public Affairs</SectionLabel>
               <BulletList

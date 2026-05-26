@@ -58,6 +58,65 @@ export default function WhyVeritas() {
           </div>
         </section>
       ))}
+
+      {/* Who We Serve */}
+      <section className={`py-20 px-6 ${sections.length % 2 === 0 ? "bg-surface" : ""}`}>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-4">
+            Who We Serve
+          </p>
+          <h2 className="font-heading text-3xl text-text-primary mb-6">
+            Built for organizations that need to get it right.
+          </h2>
+          <p className="text-text-secondary text-lg leading-relaxed mb-10">
+            Whether you&rsquo;re a federal agency modernizing your
+            infrastructure, a growing business pursuing your first government
+            contract, or a corporation needing policy insight and operational
+            reform -- Veritas is your strategic partner.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              "Federal agencies",
+              "Mission-driven businesses",
+              "Corporations",
+              "Emerging ventures",
+            ].map((audience) => (
+              <div
+                key={audience}
+                className="bg-surface-elevated border border-border p-5 text-center"
+              >
+                <p className="font-heading text-base text-gold">{audience}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Strategic Partnerships */}
+      <section
+        className={`py-20 px-6 ${(sections.length + 1) % 2 === 0 ? "bg-surface" : ""}`}
+      >
+        <div className="max-w-4xl mx-auto">
+          <div className="border-l-2 border-gold pl-8">
+            <p className="text-gold text-xs uppercase tracking-[0.3em] font-body mb-4">
+              Strategic Partnerships
+            </p>
+            <h2 className="font-heading text-3xl text-text-primary mb-6">
+              A network built for holistic solutions.
+            </h2>
+            <p className="text-text-secondary text-lg leading-relaxed">
+              At Veritas Consulting Partners, we believe in the power of
+              collaboration to deliver holistic, forward-thinking solutions. We
+              proudly partner with legal professionals, realtors, AI and
+              technology companies, mental health professionals, and multimedia
+              specialists to provide our clients with a comprehensive network
+              of expertise. These partnerships allow us to offer integrated,
+              innovative services that address complex challenges and drive
+              meaningful results.
+            </p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
