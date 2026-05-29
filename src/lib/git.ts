@@ -247,7 +247,9 @@ export async function revertLastDeploy(pusher: string): Promise<string> {
   await git.checkout("main");
   await git.pull("github", "main");
 
-  await git.raw(["revert", "--no-edit", "HEAD"]);
+  // deployBranch merges with --no-ff, so HEAD is a merge commit; reverting a
+  // merge requires -m to pick the mainline parent (1 = main before the merge).
+  await git.raw(["revert", "-m", "1", "--no-edit", "HEAD"]);
 
   await git.push(["github", "main"]);
 
