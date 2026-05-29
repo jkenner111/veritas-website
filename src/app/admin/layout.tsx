@@ -26,7 +26,7 @@ export default async function AdminLayout({
   const cfTeamDomain = process.env.CF_ACCESS_TEAM_DOMAIN;
   const cfLogoutUrl =
     authMode === "cf-access" && cfTeamDomain
-      ? `https://${cfTeamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent("https://veritasconsultingpartnersllc.com")}`
+      ? `https://${cfTeamDomain}/cdn-cgi/access/logout?returnTo=${encodeURIComponent("https://admin.veritasconsultingpartnersllc.com")}`
       : null;
 
   if (!user) {
