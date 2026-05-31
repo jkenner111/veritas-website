@@ -53,6 +53,28 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
       const data = await res.json();
       const files: string[] = data.files ?? [];
       setChangedFiles(files);
+
+      // Resume an undeployed preview after a page reload. The chat/preview UI
+      // state is client-only, but if HEAD is parked on an edit/* branch the
+      // change was committed (working tree clean) and is neither deployed nor
+      // discarded - restore the card so Discard/Deploy + the preview link return.
+      const resumeBranch = data.currentBranch as string | undefined;
+      if (resumeBranch && resumeBranch.startsWith("edit/")) {
+        setBranch((prev) => prev ?? resumeBranch);
+        setChangeState((prev) =>
+          prev === "idle" || prev === "has-changes" ? "preview-ready" : prev,
+        );
+        setPreviewUrl((prev) => {
+          if (!prev) {
+            fetch(`/api/admin/preview?branch=${encodeURIComponent(resumeBranch)}`)
+              .then((r) => (r.ok ? r.json() : null))
+              .then((d) => { if (d && d.previewUrl) setPreviewUrl(d.previewUrl); })
+              .catch(() => {});
+          }
+          return prev;
+        });
+        return;
+      }
       setChangeState((prev) => {
         if (
           prev === "previewing" ||
@@ -432,7 +454,7 @@ function ChangesCard({
   const isBusy = state === "previewing" || state === "deploying" || state === "discarding" || state === "reverting";
   const canPreview = !isBusy && files.length > 0 && state !== "deployed";
   const canDeploy = state === "preview-ready";
-  const canDiscard = !isBusy && files.length > 0 && state !== "deployed";
+  const canDiscard = !isBusy && state !== "idle" && state !== "deployed" && state !== "reverted";
 
   return (
     <section className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
