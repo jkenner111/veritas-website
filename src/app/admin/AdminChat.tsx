@@ -6,6 +6,11 @@ import { useRef, useState, useEffect, useCallback } from "react";
 
 const ACCEPTED_TYPES = ".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx";
 
+// Marks that a deploy/revert rebuild is in flight, so the lock survives a page
+// reload until the fresh container (different bootId) is live.
+const DEPLOY_MARKER_KEY = "veritas-deploy-in-progress";
+const DEPLOY_STALL_MS = 6 * 60 * 1000; // give up waiting on the rebuild after 6 min
+
 type PendingFile = { id: string; file: File };
 type UploadResult = {
   accepted: Array<{ originalName: string; storedName: string; path: string; size: number; type: string }>;
@@ -45,6 +50,42 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [changeError, setChangeError] = useState<string | null>(null);
   const [commitMessage, setCommitMessage] = useState("");
+  // True once a rebuild has been waited on past DEPLOY_STALL_MS without the
+  // container swapping — lifts the lock so the user isn't stranded.
+  const [deployStalled, setDeployStalled] = useState(false);
+
+  // Boot id of the container at the moment a deploy/revert was triggered, used
+  // to auto-reload once the rebuild swaps in a fresh container.
+  const deployBootIdRef = useRef<string | null>(null);
+  const snapshotBootId = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/deploy", { cache: "no-store" });
+      deployBootIdRef.current = res.ok ? (await res.json()).bootId ?? null : null;
+    } catch {
+      deployBootIdRef.current = null;
+    }
+  }, []);
+
+  // Persist a deploy-in-progress marker so a page reload mid-rebuild re-asserts
+  // the lock instead of dropping the user onto a clean, editable page while the
+  // production container is still rebuilding.
+  const markDeploying = useCallback(() => {
+    try {
+      sessionStorage.setItem(
+        DEPLOY_MARKER_KEY,
+        JSON.stringify({ bootId: deployBootIdRef.current, startedAt: Date.now() }),
+      );
+    } catch {
+      // sessionStorage unavailable; lock just won't survive a reload
+    }
+  }, []);
+  const clearDeployMarker = useCallback(() => {
+    try {
+      sessionStorage.removeItem(DEPLOY_MARKER_KEY);
+    } catch {
+      // ignore
+    }
+  }, []);
 
   const checkStatus = useCallback(async () => {
     try {
@@ -112,6 +153,82 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // After a deploy or revert, the production container rebuilds (~2-3 min) and
+  // is force-recreated. Poll for a new boot id and reload once it appears, so
+  // the admin always lands on the freshly built, clean state — and can't race
+  // the in-flight rebuild with a second edit. If the rebuild never completes
+  // (build error, webhook down), bail out after DEPLOY_STALL_MS so the user
+  // isn't stranded on a permanent spinner with the chat locked.
+  useEffect(() => {
+    if (changeState !== "deployed" && changeState !== "reverted") return;
+    const before = deployBootIdRef.current;
+    let startedAt = Date.now();
+    try {
+      const marker = JSON.parse(sessionStorage.getItem(DEPLOY_MARKER_KEY) || "null");
+      if (marker?.startedAt) startedAt = marker.startedAt;
+    } catch {
+      // ignore
+    }
+    let active = true;
+    const interval = setInterval(async () => {
+      if (Date.now() - startedAt > DEPLOY_STALL_MS) {
+        clearInterval(interval);
+        clearDeployMarker();
+        if (active) setDeployStalled(true);
+        return;
+      }
+      try {
+        const res = await fetch("/api/admin/deploy", { cache: "no-store" });
+        if (!res.ok) return;
+        const { bootId } = await res.json();
+        if (active && bootId && bootId !== before) {
+          clearInterval(interval);
+          clearDeployMarker();
+          window.location.reload();
+        }
+      } catch {
+        // container is mid-swap; keep polling
+      }
+    }, 4000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [changeState, clearDeployMarker]);
+
+  // On (re)mount, if a deploy was in flight when the page reloaded, re-assert
+  // the lock until the fresh container is live — unless the rebuild already
+  // finished (bootId changed) or the marker is too old, in which case clear it.
+  useEffect(() => {
+    let marker: { bootId: string | null; startedAt: number } | null = null;
+    try {
+      marker = JSON.parse(sessionStorage.getItem(DEPLOY_MARKER_KEY) || "null");
+    } catch {
+      marker = null;
+    }
+    if (!marker) return;
+    if (Date.now() - marker.startedAt > DEPLOY_STALL_MS) {
+      clearDeployMarker();
+      return;
+    }
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/deploy", { cache: "no-store" });
+        const bootId = res.ok ? (await res.json()).bootId : null;
+        // Different (or unknown) bootId => the rebuild already swapped the
+        // container; nothing to lock. Same bootId => still rebuilding, re-lock.
+        if (!bootId || bootId !== marker.bootId) {
+          clearDeployMarker();
+          return;
+        }
+        deployBootIdRef.current = marker.bootId;
+        setChangeState("deployed");
+      } catch {
+        clearDeployMarker();
+      }
+    })();
+  }, [clearDeployMarker]);
 
   const addFiles = (list: FileList | null) => {
     if (!list) return;
@@ -211,8 +328,10 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
 
   const handleDeploy = async () => {
     if (!branch) return;
+    setDeployStalled(false);
     setChangeState("deploying");
     setChangeError(null);
+    await snapshotBootId();
     try {
       const res = await fetch("/api/admin/deploy", {
         method: "POST",
@@ -221,6 +340,7 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Deploy failed");
+      markDeploying();
       setChangeState("deployed");
     } catch (e) {
       setChangeError(e instanceof Error ? e.message : "Deploy failed");
@@ -229,12 +349,15 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
   };
 
   const handleRevert = async () => {
+    setDeployStalled(false);
     setChangeState("reverting");
     setChangeError(null);
+    await snapshotBootId();
     try {
       const res = await fetch("/api/admin/revert", { method: "POST" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Revert failed");
+      markDeploying();
       setChangeState("reverted");
     } catch (e) {
       setChangeError(e instanceof Error ? e.message : "Revert failed");
@@ -261,6 +384,8 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
   };
 
   const resetChangeFlow = () => {
+    clearDeployMarker();
+    setDeployStalled(false);
     setChangeState("idle");
     setBranch(null);
     setPreviewUrl(null);
@@ -276,9 +401,21 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
 
   const openPicker = () => fileInputRef.current?.click();
 
+  // While a deploy/revert rebuild is in flight the chat is locked: starting a
+  // new edit now would race the rebuild (the deploy script hard-resets the
+  // shared working tree and force-recreates this container mid-request). Once
+  // the rebuild is declared stalled we lift the lock so the user can recover.
+  const deployLocked =
+    !deployStalled &&
+    (changeState === "deploying" ||
+      changeState === "deployed" ||
+      changeState === "reverting" ||
+      changeState === "reverted");
+
   const canSend =
     (status === "ready" || status === "error") &&
     !isUploading &&
+    !deployLocked &&
     (input.trim().length > 0 || pending.length > 0);
 
   const hasMessages = messages.length > 0;
@@ -356,8 +493,12 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
                 if (canSend) submit(input);
               }
             }}
-            placeholder="Describe what you want to change on the website..."
-            disabled={status !== "ready" && status !== "error"}
+            placeholder={
+              deployLocked
+                ? "Locked while the live site rebuilds — this page will refresh automatically..."
+                : "Describe what you want to change on the website..."
+            }
+            disabled={(status !== "ready" && status !== "error") || deployLocked}
             rows={5}
             className="flex-1 px-4 py-3 text-base bg-transparent outline-none placeholder:text-gray-400 disabled:bg-transparent resize-none border-b border-gray-200"
           />
@@ -366,7 +507,8 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
               type="button"
               title="Attach a file"
               onClick={openPicker}
-              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700"
+              disabled={deployLocked}
+              className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <PaperclipIcon />
               <span>Attach</span>
@@ -406,6 +548,7 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
 
       <ChangesCard
         state={changeState}
+        stalled={deployStalled}
         files={changedFiles}
         previewUrl={previewUrl}
         error={changeError}
@@ -415,7 +558,7 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
         onDeploy={handleDeploy}
         onDiscard={handleDiscard}
         onRevert={handleRevert}
-        onReset={resetChangeFlow}
+        onDismissDeploy={resetChangeFlow}
         onErrorDismiss={handleErrorDismiss}
       />
     </div>
@@ -424,6 +567,7 @@ export function AdminChat({ userName = "there" }: AdminChatProps) {
 
 interface ChangesCardProps {
   state: ChangeState;
+  stalled: boolean;
   files: string[];
   previewUrl: string | null;
   error: string | null;
@@ -433,12 +577,13 @@ interface ChangesCardProps {
   onDeploy: () => void;
   onDiscard: () => void;
   onRevert: () => void;
-  onReset: () => void;
+  onDismissDeploy: () => void;
   onErrorDismiss: () => void;
 }
 
 function ChangesCard({
   state,
+  stalled,
   files,
   previewUrl,
   error,
@@ -448,7 +593,7 @@ function ChangesCard({
   onDeploy,
   onDiscard,
   onRevert,
-  onReset,
+  onDismissDeploy,
   onErrorDismiss,
 }: ChangesCardProps) {
   const isBusy = state === "previewing" || state === "deploying" || state === "discarding" || state === "reverting";
@@ -529,20 +674,23 @@ function ChangesCard({
         <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 mb-3">
           <p className="text-sm font-semibold text-green-900 mb-1">Deployed!</p>
           <p className="text-sm text-green-800 mb-2">
-            Your changes have been published.
+            Your changes have been published. The live site is rebuilding now.
           </p>
-          <p className="text-xs text-green-800 mb-3">
-            Please wait about 2&ndash;3 minutes for the live site to rebuild, then refresh{" "}
-            <a
-              href="https://veritasconsultingpartnersllc.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-green-900"
-            >
-              veritasconsultingpartnersllc.com
-            </a>
-            {" "}to see the change.
-          </p>
+          {stalled ? (
+            <div className="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-900 mb-3">
+              The rebuild is taking longer than usual. Your change may already be
+              live &mdash; reload to check. The chat is unlocked so you can keep
+              working in the meantime.
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-xs text-green-800 mb-3">
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
+              <span>
+                Rebuilding the live site (~2&ndash;3 minutes). This page refreshes
+                automatically once it&rsquo;s live.
+              </span>
+            </div>
+          )}
           <p className="text-xs text-gray-600">
             Notice a problem with what you just deployed?{" "}
             <button
@@ -566,20 +714,23 @@ function ChangesCard({
         <div className="rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 mb-3">
           <p className="text-sm font-semibold text-amber-900 mb-1">Reverted</p>
           <p className="text-sm text-amber-900 mb-2">
-            The previous change has been undone on main.
+            The previous change has been undone on main. The live site is rebuilding now.
           </p>
-          <p className="text-xs text-amber-900">
-            Please wait about 2&ndash;3 minutes for the live site to rebuild, then refresh{" "}
-            <a
-              href="https://veritasconsultingpartnersllc.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline hover:text-amber-900"
-            >
-              veritasconsultingpartnersllc.com
-            </a>
-            {" "}to confirm.
-          </p>
+          {stalled ? (
+            <div className="rounded-md bg-white border border-amber-300 px-3 py-2 text-xs text-amber-900">
+              The rebuild is taking longer than usual. The revert may already be
+              live &mdash; reload to check. The chat is unlocked so you can keep
+              working in the meantime.
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-xs text-amber-900">
+              <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
+              <span>
+                Rebuilding the live site (~2&ndash;3 minutes). This page refreshes
+                automatically once it&rsquo;s live.
+              </span>
+            </div>
+          )}
         </div>
       )}
 
@@ -605,12 +756,26 @@ function ChangesCard({
 
       {/* Action buttons — always visible, enabled/disabled based on state */}
       {state === "deployed" || state === "reverted" ? (
-        <button
-          onClick={onReset}
-          className="w-full rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 transition-colors"
-        >
-          Make another change
-        </button>
+        <p className="text-center text-xs text-gray-500">
+          {stalled ? "Rebuild is taking a while." : "Waiting for the rebuild to finish…"}{" "}
+          <button
+            onClick={() => window.location.reload()}
+            className="underline hover:text-gray-700"
+          >
+            Reload now
+          </button>
+          {stalled && (
+            <>
+              {" · "}
+              <button
+                onClick={onDismissDeploy}
+                className="underline hover:text-gray-700"
+              >
+                Dismiss
+              </button>
+            </>
+          )}
+        </p>
       ) : (
         <div className="flex gap-2">
           <button
@@ -688,6 +853,41 @@ function MessageBubble({ message }: { message: ChatMessage }) {
           if (part.type?.startsWith("tool-")) {
             const toolName = part.type.replace(/^tool-/, "");
             const label = TOOL_LABELS[toolName] ?? toolName;
+            // A tool part is a discriminated union on `state`. The pill must
+            // reflect the real outcome: tools return { error } objects on
+            // failure (state "output-available" with output.error) and the SDK
+            // marks thrown/cut calls "output-error". Showing a success arrow for
+            // those would tell the user a change was made when nothing was
+            // written — the exact trap that hid the original create_event bug.
+            const p = part as {
+              state?: string;
+              errorText?: string;
+              output?: unknown;
+            };
+            if (p.state === "input-streaming" || p.state === "input-available") {
+              return (
+                <div key={idx} className="text-xs text-gray-400 italic mt-1">
+                  &hellip; {label}
+                </div>
+              );
+            }
+            const outputError =
+              p.output &&
+              typeof p.output === "object" &&
+              "error" in p.output
+                ? String((p.output as { error: unknown }).error)
+                : null;
+            const failure =
+              p.state === "output-error"
+                ? p.errorText || "the action did not complete"
+                : outputError;
+            if (failure) {
+              return (
+                <div key={idx} className="text-xs text-red-600 italic mt-1">
+                  &#9888; {label} failed: {failure}
+                </div>
+              );
+            }
             return (
               <div key={idx} className="text-xs text-gray-500 italic mt-1">
                 &rarr; {label}

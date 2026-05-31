@@ -24,6 +24,45 @@ function getGit(): SimpleGit {
   return simpleGit(REPO_ROOT);
 }
 
+const INDEX_LOCK = path.join(REPO_ROOT, ".git", "index.lock");
+
+// If a git process was killed mid-operation — e.g. the container was
+// force-recreated during a deploy — a stale index.lock can be left behind and
+// block every future write ("Unable to create '.git/index.lock': File exists").
+// withGitLock guarantees no in-process git command is running when this is
+// called, so a lock older than 30s (far longer than any real op, including the
+// host's `git reset` during a deploy) is safe to remove.
+function clearStaleIndexLock(): void {
+  try {
+    const st = fs.statSync(INDEX_LOCK);
+    if (Date.now() - st.mtimeMs > 30_000) {
+      fs.rmSync(INDEX_LOCK, { force: true });
+    }
+  } catch {
+    // no lock present
+  }
+}
+
+// Serialize every git operation in this process. simple-git only serializes
+// commands issued through a single instance, but each admin request calls
+// getGit() for a fresh instance — so the 10s status poller and a Preview/Deploy
+// write would otherwise run as concurrent git subprocesses and collide on
+// .git/index.lock. This promise-chain mutex makes them run one at a time.
+let gitChain: Promise<unknown> = Promise.resolve();
+function withGitLock<T>(fn: () => Promise<T>): Promise<T> {
+  const run = gitChain.then(() => {
+    clearStaleIndexLock();
+    return fn();
+  });
+  // Keep the chain alive regardless of success/failure so one error doesn't
+  // wedge every later operation.
+  gitChain = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
+}
+
 function githubUrl(): string {
   if (!GITHUB_PAT) throw new Error("GITHUB_PAT not set");
   return `https://x-access-token:${GITHUB_PAT}@github.com/${GITHUB_REPO}.git`;
@@ -56,23 +95,25 @@ export type BranchStatus = {
  * Includes untracked files (simple-git puts them in not_added, not created).
  */
 export async function getStatus(): Promise<BranchStatus> {
-  const git = getGit();
-  const status = await git.status();
-  const allFiles = [
-    ...status.modified,
-    ...status.created,
-    ...status.not_added,
-    ...status.deleted,
-    ...status.renamed.map((r) => r.to),
-  ];
+  return withGitLock(async () => {
+    const git = getGit();
+    const status = await git.status();
+    const allFiles = [
+      ...status.modified,
+      ...status.created,
+      ...status.not_added,
+      ...status.deleted,
+      ...status.renamed.map((r) => r.to),
+    ];
 
-  const visibleFiles = allFiles.filter(isBoardVisible);
+    const visibleFiles = allFiles.filter(isBoardVisible);
 
-  return {
-    branch: status.current ?? "main",
-    clean: visibleFiles.length === 0,
-    files: visibleFiles,
-  };
+    return {
+      branch: status.current ?? "main",
+      clean: visibleFiles.length === 0,
+      files: visibleFiles,
+    };
+  });
 }
 
 /**
@@ -84,6 +125,7 @@ export async function createPreviewBranch(
   authorName: string,
   message: string,
 ): Promise<string> {
+ return withGitLock(async () => {
   const git = getGit();
   const now = new Date();
   const timestamp = now.toISOString().replace(/[:.]/g, "-").slice(0, 19);
@@ -127,6 +169,7 @@ export async function createPreviewBranch(
   await git.push(["-u", "github", branchName]);
 
   return branchName;
+ });
 }
 
 /**
@@ -173,7 +216,7 @@ export async function getVercelPreviewUrl(
 }
 
 /**
- * Trigger the local rebuild orchestrator (phca-webhook on port 9876).
+ * Trigger the local rebuild orchestrator (veritas-webhook on port 9877).
  * Sends a minimal GitHub-shaped push payload signed with GITHUB_WEBHOOK_SECRET
  * so the existing listener accepts it without any code changes.
  */
@@ -213,6 +256,7 @@ async function triggerRebuild(latestSha: string, pusher: string): Promise<void> 
  * rebuild orchestrator so the production container picks up the change.
  */
 export async function deployBranch(branch: string, pusher: string): Promise<void> {
+ return withGitLock(async () => {
   const git = getGit();
 
   await ensureGithubRemote(git);
@@ -232,7 +276,16 @@ export async function deployBranch(branch: string, pusher: string): Promise<void
     // best-effort
   }
 
+  // Remove the now-merged edit branch from GitHub as well, so old preview
+  // branches don't pile up on the remote.
+  try {
+    await git.push(["github", "--delete", branch]);
+  } catch {
+    // best-effort
+  }
+
   await triggerRebuild(sha, pusher);
+ });
 }
 
 /**
@@ -240,6 +293,7 @@ export async function deployBranch(branch: string, pusher: string): Promise<void
  * Used by the "Revert last deploy" button.
  */
 export async function revertLastDeploy(pusher: string): Promise<string> {
+ return withGitLock(async () => {
   const git = getGit();
 
   await ensureGithubRemote(git);
@@ -258,12 +312,14 @@ export async function revertLastDeploy(pusher: string): Promise<string> {
   await triggerRebuild(sha, pusher);
 
   return sha;
+ });
 }
 
 /**
  * Discard a preview branch — revert content changes and delete the branch.
  */
 export async function discardBranch(branch: string): Promise<void> {
+ return withGitLock(async () => {
   const git = getGit();
   const status = await git.status();
 
@@ -273,18 +329,29 @@ export async function discardBranch(branch: string): Promise<void> {
     await git.checkout(["main", "--", "content/", "public/"]);
   }
 
-  // Delete the branch
+  // Delete the branch locally
   try {
     await git.deleteLocalBranch(branch, true);
   } catch {
     // Branch may not exist
   }
+
+  // Delete it on GitHub too, so the Vercel preview is torn down and abandoned
+  // edit branches don't accumulate on the remote.
+  try {
+    await ensureGithubRemote(git);
+    await git.push(["github", "--delete", branch]);
+  } catch {
+    // Remote branch may not exist or already be deleted
+  }
+ });
 }
 
 /**
  * Revert all uncommitted changes in content/ and public/.
  */
 export async function revertChanges(): Promise<void> {
+ return withGitLock(async () => {
   const git = getGit();
   await git.checkout(["HEAD", "--", "content/", "public/"]);
   // Clean up any untracked files in content/
@@ -293,4 +360,5 @@ export async function revertChanges(): Promise<void> {
   } catch {
     // Clean may fail if there are no untracked files
   }
+ });
 }

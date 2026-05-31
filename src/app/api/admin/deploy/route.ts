@@ -2,6 +2,30 @@ import { headers } from "next/headers";
 import { findUserByEmail } from "@/lib/users";
 import { deployBranch } from "@/lib/git";
 
+// Unique per container process. A deploy runs `docker compose up -d
+// --force-recreate web`, so the live site finishing its rebuild == this
+// process being replaced by a fresh one with a different BOOT_ID. The admin
+// UI snapshots this before deploying, then polls GET /api/admin/deploy and
+// auto-reloads once the boot id changes. (HEAD commit can't be the signal:
+// .git is bind-mounted and shared with the host, so it flips the instant the
+// deploy script runs `git reset --hard`, long before the new container is up.)
+const BOOT_ID = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
+/**
+ * GET /api/admin/deploy
+ * Returns this container process's boot id so the admin UI can detect when a
+ * deploy-triggered rebuild has swapped in a fresh container.
+ */
+export async function GET() {
+  const h = await headers();
+  const email = h.get("x-admin-email");
+  const user = email ? findUserByEmail(email) : null;
+  if (!user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return Response.json({ bootId: BOOT_ID });
+}
+
 /**
  * POST /api/admin/deploy
  * Merges a preview branch to main and pushes to GitHub.

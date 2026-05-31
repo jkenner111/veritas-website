@@ -25,6 +25,16 @@ function sanitizeSlug(input: string): string {
     .replace(/^-|-$/g, "");
 }
 
+// Validate a real YYYY-MM-DD calendar date. The model is told to pass this
+// format but sometimes emits "May 28", "2026-13-40", or a date it resolved
+// wrong; an unvalidated value lands in the frontmatter and renders as
+// "Invalid Date" on the live site.
+function isValidIsoDate(date: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const d = new Date(`${date}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === date;
+}
+
 export const agentTools = {
   list_pages: tool({
     description:
@@ -118,7 +128,9 @@ export const agentTools = {
         .describe("Page content in MDX/markdown."),
     }),
     execute: async ({ slug, title, body }) => {
-      const cleanSlug = sanitizeSlug(slug);
+      // Fall back to a generic slug so an all-emoji / non-Latin slug can't
+      // produce a bare ".mdx" filename.
+      const cleanSlug = sanitizeSlug(slug) || "page";
       const filename = `${cleanSlug}.mdx`;
       const filepath = path.join(CONTENT_ROOT, "pages", filename);
 
@@ -166,7 +178,12 @@ export const agentTools = {
         .describe("Blog post content in MDX/markdown."),
     }),
     execute: async ({ title, date, summary, author, body }) => {
-      const slug = sanitizeSlug(title);
+      if (!isValidIsoDate(date)) {
+        return {
+          error: `Invalid date "${date}". Use a real calendar date in YYYY-MM-DD format, e.g. "2026-05-28".`,
+        };
+      }
+      const slug = sanitizeSlug(title) || "post";
       const filename = `${slug}.mdx`;
       const filepath = path.join(CONTENT_ROOT, "blog", filename);
 
@@ -238,6 +255,11 @@ export const agentTools = {
       const full = safeContentPath(requested);
       if (!full) return { error: "Path escapes content/ root. Refused." };
       if (!fs.existsSync(full)) return { error: `File not found: ${requested}` };
+      if (date !== undefined && !isValidIsoDate(date)) {
+        return {
+          error: `Invalid date "${date}". Use a real calendar date in YYYY-MM-DD format.`,
+        };
+      }
 
       const raw = fs.readFileSync(full, "utf-8");
       const { data: existingData, content: existingBody } = matter(raw);
