@@ -295,7 +295,15 @@ export default function OurTeam() {
                 </p>
               </div>
 
-              <div className="mt-4">
+              <div className="mt-4 flex flex-wrap gap-4">
+                <a
+                  href="https://github.com/jkenner111"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gold hover:text-gold-light text-sm transition-colors"
+                >
+                  GitHub &rarr;
+                </a>
                 <a
                   href="https://gitlab.com/jkenner111"
                   target="_blank"
