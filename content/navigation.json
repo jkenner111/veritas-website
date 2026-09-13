@@ -1,8 +1,0 @@
-[
-  { "href": "/", "label": "Home" },
-  { "href": "/what-we-do", "label": "What We Do" },
-  { "href": "/why-veritas", "label": "Why Veritas?" },
-  { "href": "/our-team", "label": "Our Team" },
-  { "href": "/blog", "label": "Blog" },
-  { "href": "/contact", "label": "Contact" }
-]
